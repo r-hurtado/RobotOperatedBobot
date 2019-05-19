@@ -4,7 +4,7 @@ var auth = require("./auth.json")
 const bot = new Discord.Client()
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    bot.user.setActivity("Big titty goth girl", { type: "WATCHING" })
+    bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
 })
 
 bot.login(auth.token)
@@ -14,7 +14,7 @@ function magicBall(user) {
     var msg = ""
     switch (stmt) {
         case 0:
-            msg = "It is certain."
+            msg = "It is known."
             break
         case 1:
             msg = "It is decidedly so."
@@ -92,7 +92,7 @@ function magicBall(user) {
             msg = "I'm not sure I'm comfortable answering that."
             break
         case 26:
-            msg = "Uhhh... @miecatt#4093 wat do?"
+            msg = "Uhhh... @miecatt#4093, wat do?"
             break
         case 27:
             msg = "Sure."
@@ -216,7 +216,13 @@ bot.on("message", function(receivedMessage) {
             case "roll":
                 receivedMessage.channel.send(rollDice(args[1]))
                 break
+            case "pic":
+                const webAttachment = new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")
+                receivedMessage.channel.send(webAttachment)
+                break
             // Just add any case commands if you want to..
         }
     }
+    mention = receivedMessage.mentions.users.first()
+    if (mention == bot.user) receivedMessage.channel.send("Don't @ me.")
 })
