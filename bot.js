@@ -251,6 +251,7 @@ function leaveChannel(msg) {
 
 function play(con, msg) {
     var server = servers[msg.guild.id]
+    console.log(server.queue)
     const stream = ytdl(server.queue[0], { filter: "audioonly" })
     server.dispatcher = con.playStream(stream)
     server.dispatcher.on("end", function() {
@@ -282,7 +283,7 @@ function listSongs(msg)
     var str = ""
     var counter = 0
     servers[msg.guild.id].queue.forEach(element => {
-        str += '[' + counter++ + ']' + element.toString() + "\n"
+        str += '[' + counter++ + '] ' + element.toString() + "\n"
     });
     msg.channel.send(str)
 }
@@ -290,7 +291,8 @@ function listSongs(msg)
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
-    if (receivedMessage.content.substring(0, 1) == "!") {
+    var prefix = receivedMessage.content.substring(0, 1)
+    if (prefix == "!" || prefix == "/" || prefix == "\\") {
         var args = receivedMessage.content.substring(1).split(" ")
         var cmd = args[0]
 
