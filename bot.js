@@ -180,6 +180,9 @@ function rollDice(args) {
     if (numDice < 0 || numSides < 0) return "You need to speed up your roll there, bud."
 
     var msg = ""
+    if (numDice == 69 || numSides == 69) msg += "Nice.\n"
+    if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
+
     for (var i = 0; i < numDice; i++) {
         die = Math.floor(Math.random() * (numSides - 1)) + 1
         sum += die
