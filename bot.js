@@ -4,7 +4,8 @@ var auth = require("./auth.json")
 const bot = new Discord.Client()
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
+    //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
+    bot.user.setActivity("the binaries, baby", { type: "PLAYING" })
 })
 
 bot.login(auth.token)
@@ -203,6 +204,22 @@ function flipCoin() {
     return "./heads.png"
 }
 
+function help()
+{
+    msg = "Available commands:\n";
+
+    msg += "__!ping__\n    Replies with Pong!\n"
+    msg += "__!pew__\n    Shoots back\n"
+    msg += "__!magic__\n    Ask me a question\n"
+    msg += "__!ah__\n    ~~Screams~~ Deprecated\n"
+    msg += "__!roll__\n    Roll <number of dice>d<number of sides> dice\n"
+    msg += "__!pic__\n    Returns my Picture\n"
+    msg += "__!flip__\n    Flips a coin\n"
+
+    msg += "__!help__\n    This command"
+    return msg;
+}
+
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
@@ -224,7 +241,7 @@ bot.on("message", function(receivedMessage) {
                 receivedMessage.channel.send("This command is broken, and has since been deprecated.")
                 break
             case "roll":
-                receivedMessage.channel.send(rollDice(args[1]))
+                receivedMessage.channel.send(rollDice(args[1])).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
                 break
             case "pic":
                 receivedMessage.channel.send(new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
@@ -232,7 +249,9 @@ bot.on("message", function(receivedMessage) {
             case "flip":
                 receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
                 break
-            
+            case "help":
+                receivedMessage.channel.send(help())
+                break
             // Just add any case commands if you want to..
         }
     }
