@@ -3,9 +3,16 @@
     "version": "1.0.0",
     "description": "My First Discord Bot",
     "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js",
+        "dev": "nodemon bot.js"
+    },
     "author": "miecatt",
     "dependencies": {
         "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
         "winston": "^3.2.1"
+    },
+    "devDependencies": {
+        "nodemon": "^1.19.0"
     }
 }
