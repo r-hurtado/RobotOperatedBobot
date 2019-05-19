@@ -10,7 +10,7 @@ bot.on("ready", () => {
 bot.login(auth.token)
 
 function magicBall(user) {
-    var stmt = Math.floor(Math.random() * 50)
+    var stmt = Math.floor(Math.random() * 52)
     var msg = ""
     switch (stmt) {
         case 0:
@@ -62,108 +62,111 @@ function magicBall(user) {
             msg = "Pineapple on pizza? No. Never. Get out."
             break
         case 16:
-            msg = "Oh no. Have I become sentient?"
+            msg = "Pineapple on pizza? Always."
             break
         case 17:
-            msg = "That depends on whether or not you believe in happiness."
+            msg = "Oh no. Have I become sentient?"
             break
         case 18:
-            msg = "Do you enjoy hentai? Then yeah, probably."
+            msg = "That depends on whether or not you believe in happiness."
             break
         case 19:
-            msg = "Honestly? No. That's pretty fucked up."
+            msg = "Do you enjoy hentai? Then yeah, probably."
             break
         case 20:
-            msg = "Hi, I'm Ron, all my jokes are about suicide."
+            msg = "Honestly? No. That's pretty fucked up."
             break
         case 21:
-            msg = "No, Tom Cruise is not gay. Stop asking that question."
+            msg = "Hi, I'm Ron, all my jokes are about suicide."
             break
         case 22:
-            msg = "Your chances are 50/50 AT BEST."
+            msg = "No, Tom Cruise is not gay. Stop asking that question."
             break
         case 23:
-            msg = "I do what I want."
+            msg = "Your chances are 50/50 AT BEST."
             break
         case 24:
-            msg = "Beep-Boop. I mean, uhh, yes."
+            msg = "I do what I want."
             break
         case 25:
-            msg = "I'm not sure I'm comfortable answering that."
+            msg = "Beep-Boop. I mean, uhh, yes."
             break
         case 26:
-            msg = "Uhhh... @miecatt#4093, wat do?"
+            msg = "I'm not sure I'm comfortable answering that."
             break
         case 27:
-            msg = "Sure."
+            msg = "Uhhh... @miecatt#4093, wat do?"
             break
         case 28:
-            msg = "Without the hard-R, I'm sure it's fine."
+            msg = "Sure."
             break
         case 29:
-            msg = "Wait, that's illegal."
+            msg = "Without the hard-R, I'm sure it's fine."
             break
         case 30:
-            msg = "I *really* don't think you should."
+            msg = "Wait, that's illegal."
             break
         case 31:
-            msg = "That depends, do you trust me? ||Snape kills Dumbledore.||"
+            msg = "I *really* don't think you should."
             break
         case 32:
-            msg = "WHOA, ABSOLUTELY NOT."
+            msg = "That depends, do you trust me? ||Snape kills Dumbledore.||"
             break
         case 33:
-            msg = "Fuck dude, IDK."
+            msg = "WHOA, ABSOLUTELY NOT."
             break
         case 34:
-            msg = "Why are you asking that?"
+            msg = "Fuck dude, IDK."
             break
         case 35:
-            msg = "I'm not answering that."
+            msg = "Why are you asking that?"
             break
         case 36:
-            msg = "Ethically? Yes. Morally? No."
+            msg = "I'm not answering that."
             break
         case 37:
-            msg = "Only if you think the clit is a myth."
+            msg = "Ethically? Yes. Morally? No."
             break
         case 38:
-            msg = "In a perfect world, yes."
+            msg = "Only if you think the clit is a myth."
             break
         case 39:
-            msg = "No."
+            msg = "In a perfect world, yes."
             break
         case 40:
-            msg = "8=====D"
+            msg = "No."
             break
         case 41:
-            msg = "1010. That's binary for no."
+            msg = "8=====D"
             break
         case 42:
-            msg = "On the record? Yes. Off the record? Emphatically yes."
+            msg = "1010. That's binary for no."
             break
         case 43:
-            msg = "I don't think I understand that question. Could you re-phrase it?"
+            msg = "On the record? Yes. Off the record? Emphatically yes."
             break
         case 44:
-            msg = "(^__^)"
+            msg = "I don't think I understand that question. Could you re-phrase it?"
             break
         case 45:
-            msg = "<(O__O<) Kirby says no"
+            msg = "(^__^)"
             break
         case 46:
-            msg = "Gentle persuasion will help, so yeah, go for it"
+            msg = "<(O__O<) Kirby says no"
             break
         case 47:
-            msg = "Hitler would agree with that."
+            msg = "Gentle persuasion will help, so yeah, go for it"
             break
         case 48:
-            msg = "My gut says yes."
+            msg = "Hitler would agree with that."
             break
         case 49:
-            msg = "If you agree with the 3/5 compromise, definitely yes."
+            msg = "My gut says yes."
             break
         case 50:
+            msg = "If you agree with the 3/5 compromise, definitely yes."
+            break
+        case 51:
             msg = "Este mensaje es traído a usted por el robot español."
             break
     }
@@ -184,13 +187,20 @@ function rollDice(args) {
     if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
 
     for (var i = 0; i < numDice; i++) {
-        die = Math.floor(Math.random() * (numSides - 1)) + 1
+        die = Math.floor(Math.random() * (numSides)) + 1
         sum += die
         msg += "(" + die + ") "
     }
 
     msg += "= " + sum.toString()
     return msg
+}
+
+function flipCoin() {
+    var stmt = Math.floor(Math.random() * 2)
+    if (stmt == 0)
+        return "./tails.png"
+    return "./heads.png"
 }
 
 bot.on("message", function(receivedMessage) {
@@ -217,9 +227,12 @@ bot.on("message", function(receivedMessage) {
                 receivedMessage.channel.send(rollDice(args[1]))
                 break
             case "pic":
-                const webAttachment = new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")
-                receivedMessage.channel.send(webAttachment)
+                receivedMessage.channel.send(new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
                 break
+            case "flip":
+                receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
+                break
+            
             // Just add any case commands if you want to..
         }
     }
