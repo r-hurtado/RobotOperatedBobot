@@ -215,6 +215,7 @@ function help()
     msg += "__!roll__\n    Roll <number of dice>d<number of sides> dice\n"
     msg += "__!pic__\n    Returns my Picture\n"
     msg += "__!flip__\n    Flips a coin\n"
+    msg += "__!purpose__\n    What is my purpose?\n"
 
     msg += "__!help__\n    This command"
     return msg;
@@ -252,6 +253,8 @@ bot.on("message", function(receivedMessage) {
             case "help":
                 receivedMessage.channel.send(help())
                 break
+            case "purpose":
+                receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp");
             // Just add any case commands if you want to..
         }
     }
