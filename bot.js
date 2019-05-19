@@ -1,7 +1,7 @@
 const Discord = require("discord.js")
 var auth = require("./auth.json")
 const bot = new Discord.Client()
-const ytdl = require('ytdl-core')
+const ytdl = require("ytdl-core")
 
 global.servers = {}
 
@@ -224,14 +224,16 @@ function help() {
 
 function joinChannel(msg, args) {
     if (msg.member.voiceChannel) {
-        if (!servers[msg.guild.id]) servers[msg.guild.id] = { queue: [] }
+        if (!servers[msg.guild.id]) servers[msg.guild.id] = { queue: [], con: "" }
         msg.member.voiceChannel
             .join()
             .then(connection => {
-                var server = servers[msg.guild.id]
-                server.queue.push(args)
-                console.log(args)
-                play(connection, msg)
+                if (args) {
+                    var server = servers[msg.guild.id]
+                    server.queue.push(args)
+                    server.con = connection
+                    play(connection, msg)
+                }
             })
             .catch(console.log)
     } else {
@@ -249,15 +251,40 @@ function leaveChannel(msg) {
 
 function play(con, msg) {
     var server = servers[msg.guild.id]
-    const stream = ytdl(server.queue[0], {filter: 'audioonly'})
+    const stream = ytdl(server.queue[0], { filter: "audioonly" })
     server.dispatcher = con.playStream(stream)
-    server.queue.shift()
-    server.dispatcher.on("end", function(){
-        if(server.queue[0])
-            play(con, msg)
-        else
-            con.disconnect()
+    server.dispatcher.on("end", function() {
+        server.queue.shift()
+        if (server.queue[0]) play(con, msg)
+        else con.disconnect()
     })
+}
+
+function addSong(msg, args) {
+    if (msg.member.voiceChannel) {
+        if (args) {
+            var server = servers[msg.guild.id]
+            server.queue.push(args)
+            msg.channel.send("Congrats, your song is now " + (server.queue.length - 1) + " in queue.")
+        }
+    } else {
+        msg.reply("you must be in the voice channel to add songs.")
+    }
+}
+
+function skipSong(msg)
+{
+
+}
+
+function listSongs(msg)
+{
+    var str = ""
+    var counter = 0
+    servers[msg.guild.id].queue.forEach(element => {
+        str += '[' + counter++ + ']' + element.toString() + "\n"
+    });
+    msg.channel.send(str)
 }
 
 bot.on("message", function(receivedMessage) {
@@ -306,6 +333,15 @@ bot.on("message", function(receivedMessage) {
                 break
             case "leave":
                 leaveChannel(receivedMessage)
+                break
+            case "add":
+                addSong(receivedMessage, args[1])
+                break
+            case "skip":
+                skipSong(receivedMessage)
+                break
+            case "list":
+                listSongs(receivedMessage)
                 break
             // Just add any case commands if you want to..
         }
