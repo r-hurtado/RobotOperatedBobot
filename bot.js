@@ -1,7 +1,10 @@
 const Discord = require("discord.js")
 var auth = require("./auth.json")
-
 const bot = new Discord.Client()
+const ytdl = require('ytdl-core')
+
+global.servers = {}
+
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
@@ -188,7 +191,7 @@ function rollDice(args) {
     if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
 
     for (var i = 0; i < numDice; i++) {
-        die = Math.floor(Math.random() * (numSides)) + 1
+        die = Math.floor(Math.random() * numSides) + 1
         sum += die
         msg += "(" + die + ") "
     }
@@ -199,14 +202,12 @@ function rollDice(args) {
 
 function flipCoin() {
     var stmt = Math.floor(Math.random() * 2)
-    if (stmt == 0)
-        return "./tails.png"
+    if (stmt == 0) return "./tails.png"
     return "./heads.png"
 }
 
-function help()
-{
-    msg = "Available commands:\n";
+function help() {
+    msg = "Available commands:\n"
 
     msg += "__!ping__\n    Replies with Pong!\n"
     msg += "__!pew__\n    Shoots back\n"
@@ -218,7 +219,45 @@ function help()
     msg += "__!purpose__\n    What is my purpose?\n"
 
     msg += "__!help__\n    This command"
-    return msg;
+    return msg
+}
+
+function joinChannel(msg, args) {
+    if (msg.member.voiceChannel) {
+        if (!servers[msg.guild.id]) servers[msg.guild.id] = { queue: [] }
+        msg.member.voiceChannel
+            .join()
+            .then(connection => {
+                var server = servers[msg.guild.id]
+                server.queue.push(args)
+                console.log(args)
+                play(connection, msg)
+            })
+            .catch(console.log)
+    } else {
+        msg.reply("you need to join a voice channel first!")
+    }
+}
+
+function leaveChannel(msg) {
+    if (msg.guild.voiceConnection) {
+        msg.guild.voiceConnection.disconnect()
+    } else {
+        msg.reply("I need to join a voice channel first!")
+    }
+}
+
+function play(con, msg) {
+    var server = servers[msg.guild.id]
+    const stream = ytdl(server.queue[0], {filter: 'audioonly'})
+    server.dispatcher = con.playStream(stream)
+    server.queue.shift()
+    server.dispatcher.on("end", function(){
+        if(server.queue[0])
+            play(con, msg)
+        else
+            con.disconnect()
+    })
 }
 
 bot.on("message", function(receivedMessage) {
@@ -242,19 +281,32 @@ bot.on("message", function(receivedMessage) {
                 receivedMessage.channel.send("This command is broken, and has since been deprecated.")
                 break
             case "roll":
-                receivedMessage.channel.send(rollDice(args[1])).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
+                receivedMessage.channel.send(rollDice(args[1])).catch(error => {
+                    receivedMessage.channel.send("Error: " + error.message)
+                })
                 break
             case "pic":
-                receivedMessage.channel.send(new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
+                receivedMessage.channel.send(new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")).catch(error => {
+                    receivedMessage.channel.send("Error: " + error.message)
+                })
                 break
             case "flip":
-                receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {receivedMessage.channel.send("Error: " + error.message)})
+                receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {
+                    receivedMessage.channel.send("Error: " + error.message)
+                })
                 break
             case "help":
                 receivedMessage.channel.send(help())
                 break
             case "purpose":
-                receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp");
+                receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp")
+                break
+            case "join":
+                joinChannel(receivedMessage, args[1])
+                break
+            case "leave":
+                leaveChannel(receivedMessage)
+                break
             // Just add any case commands if you want to..
         }
     }

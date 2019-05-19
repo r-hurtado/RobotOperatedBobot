@@ -11,7 +11,11 @@
     "dependencies": {
         "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
         "discord.js": "^11.5.0",
-        "winston": "^3.2.1"
+        "ffmpeg-binaries": "^3.2.2",
+        "ffmpeg-static": "^2.4.0",
+        "opusscript": "0.0.6",
+        "winston": "^3.2.1",
+        "ytdl-core": "^0.29.2"
     },
     "devDependencies": {
         "nodemon": "^1.19.0"
