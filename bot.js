@@ -292,7 +292,7 @@ bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     var prefix = receivedMessage.content.substring(0, 1)
-    if (prefix == "!" || prefix == "/" || prefix == "\\") {
+    if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
         var args = receivedMessage.content.substring(1).split(" ")
         var cmd = args[0]
 
