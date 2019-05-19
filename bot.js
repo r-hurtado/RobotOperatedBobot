@@ -273,18 +273,14 @@ function addSong(msg, args) {
     }
 }
 
-function skipSong(msg)
-{
+function skipSong(msg) {}
 
-}
-
-function listSongs(msg)
-{
+function listSongs(msg) {
     var str = ""
     var counter = 0
     servers[msg.guild.id].queue.forEach(element => {
-        str += '[' + counter++ + '] ' + element.toString() + "\n"
-    });
+        str += "[" + counter++ + "] " + element.toString() + "\n"
+    })
     msg.channel.send(str)
 }
 
@@ -350,4 +346,5 @@ bot.on("message", function(receivedMessage) {
     }
     mention = receivedMessage.mentions.users.first()
     if (mention == bot.user) receivedMessage.channel.send("Don't @ me.")
+    if (receivedMessage.content.toLowerCase().includes("ocelot")) receivedMessage.channel.send("https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
 })
