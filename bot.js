@@ -293,7 +293,10 @@ function listSongs(msg) {
     msg.channel.send(str)
 }
 
-function addForRuss(msg) {}
+function addForRuss(msg) {
+    var ids = require("./ids.json")
+    console.log(ids.list)
+}
 
 function jsonParse() {
     var ids = []
@@ -385,7 +388,8 @@ bot.on("message", function(receivedMessage) {
                 listSongs(receivedMessage)
                 break
             case "json":
-                jsonParse()
+                // Only used for intermediary purposes
+                //jsonParse()
                 break
             // Just add any case commands if you want to..
         }
