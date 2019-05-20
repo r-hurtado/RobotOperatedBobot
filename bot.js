@@ -8,13 +8,13 @@ global.servers = {}
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
-    bot.user.setActivity("the binaries, baby", { type: "PLAYING" })
+    bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
 })
 
 bot.login(auth.token)
 
 function magicBall(user) {
-    var stmt = Math.floor(Math.random() * 52)
+    var stmt = Math.floor(Math.random() * 53)
     var msg = ""
     switch (stmt) {
         case 0:
@@ -173,6 +173,9 @@ function magicBall(user) {
         case 51:
             msg = "Este mensaje es traído a usted por el robot español."
             break
+        case 52:
+            msg = "Let it be fear."
+            break
     }
     return msg
 }
@@ -224,7 +227,7 @@ function help() {
 
 function joinChannel(msg, args) {
     if (msg.member.voiceChannel) {
-        if (!servers[msg.guild.id]) servers[msg.guild.id] = { queue: [], con: "" }
+        servers[msg.guild.id] = { queue: [], con: "" }
         msg.member.voiceChannel
             .join()
             .then(connection => {
@@ -244,6 +247,7 @@ function joinChannel(msg, args) {
 function leaveChannel(msg) {
     if (msg.guild.voiceConnection) {
         msg.guild.voiceConnection.disconnect()
+        servers[msg.guild.id].queue = []
     } else {
         msg.reply("I need to join a voice channel first!")
     }
@@ -261,19 +265,27 @@ function play(con, msg) {
     })
 }
 
-function addSong(msg, args) {
+function addSong(msg, args, first = false) {
     if (msg.member.voiceChannel) {
         if (args) {
             var server = servers[msg.guild.id]
-            server.queue.push(args)
-            msg.channel.send("Congrats, your song is now " + (server.queue.length - 1) + " in queue.")
+            if (first)
+            {
+                var first = server.queue.shift()
+                server.queue.unshift(args)
+                server.queue.unshift(first)
+                msg.channel.send("Congrats, your song is now 1 in queue.")
+            }
+            else
+            {
+                server.queue.push(args)
+                msg.channel.send("Congrats, your song is now " + (server.queue.length - 1) + " in queue.")
+            }
         }
     } else {
         msg.reply("you must be in the voice channel to add songs.")
     }
 }
-
-function skipSong(msg) {}
 
 function listSongs(msg) {
     var str = ""
@@ -283,6 +295,8 @@ function listSongs(msg) {
     })
     msg.channel.send(str)
 }
+
+function addForRuss(msg) {}
 
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
@@ -335,8 +349,21 @@ bot.on("message", function(receivedMessage) {
             case "add":
                 addSong(receivedMessage, args[1])
                 break
+            case "addfirst":
+                addSong(receivedMessage, args[1], true)
+                break
             case "skip":
-                skipSong(receivedMessage)
+                servers[receivedMessage.guild.id].dispatcher.end()
+                break
+            case "pause":
+                const dis = servers[receivedMessage.guild.id].dispatcher
+                if(dis.paused)
+                    dis.resume()
+                else
+                    dis.pause()
+                break
+            case "addforruss":
+                addForRuss(receivedMessage)
                 break
             case "list":
                 listSongs(receivedMessage)
