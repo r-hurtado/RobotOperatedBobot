@@ -269,15 +269,12 @@ function addSong(msg, args, first = false) {
     if (msg.member.voiceChannel) {
         if (args) {
             var server = servers[msg.guild.id]
-            if (first)
-            {
+            if (first) {
                 var first = server.queue.shift()
                 server.queue.unshift(args)
                 server.queue.unshift(first)
                 msg.channel.send("Congrats, your song is now 1 in queue.")
-            }
-            else
-            {
+            } else {
                 server.queue.push(args)
                 msg.channel.send("Congrats, your song is now " + (server.queue.length - 1) + " in queue.")
             }
@@ -297,6 +294,27 @@ function listSongs(msg) {
 }
 
 function addForRuss(msg) {}
+
+function jsonParse() {
+    var ids = []
+    for (var i = 1; i < 20; i++) {
+        var data = require("./PlaylistIDs/page" + i + ".json")
+        data.items.forEach(id => {
+            ids.push(id.contentDetails.videoId)
+        })
+    }
+    //console.log(ids)
+    //console.log(ids.length)
+
+    var fs = require("fs")
+    var data = ""
+    ids.forEach(id => {
+        data += "https://youtu.be/" + id + "\n"
+    })
+    fs.writeFile("../ids.txt", data, err => {
+        if (err) console.log(err)
+    })
+}
 
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
@@ -357,16 +375,17 @@ bot.on("message", function(receivedMessage) {
                 break
             case "pause":
                 const dis = servers[receivedMessage.guild.id].dispatcher
-                if(dis.paused)
-                    dis.resume()
-                else
-                    dis.pause()
+                if (dis.paused) dis.resume()
+                else dis.pause()
                 break
             case "addforruss":
                 addForRuss(receivedMessage)
                 break
             case "list":
                 listSongs(receivedMessage)
+                break
+            case "json":
+                jsonParse()
                 break
             // Just add any case commands if you want to..
         }
