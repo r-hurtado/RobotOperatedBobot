@@ -255,7 +255,7 @@ function leaveChannel(msg) {
 
 function play(con, msg) {
     var server = servers[msg.guild.id]
-    console.log(server.queue)
+    //console.log(server.queue)
     const stream = ytdl(server.queue[0], { filter: "audioonly" })
     server.dispatcher = con.playStream(stream)
     server.dispatcher.on("end", function() {
@@ -287,15 +287,36 @@ function addSong(msg, args, first = false) {
 function listSongs(msg) {
     var str = ""
     var counter = 0
-    servers[msg.guild.id].queue.forEach(element => {
-        str += "[" + counter++ + "] " + element.toString() + "\n"
+    var max = 5
+    var queue = servers[msg.guild.id].queue
+    queue.forEach(element => {
+        if (counter < max) str += "[" + counter++ + "] " + element.toString() + "\n"
     })
+    if (counter < queue.length) str += "Plus " + (queue.length - max) + " more."
     msg.channel.send(str)
 }
 
 function addForRuss(msg) {
     var ids = require("./ids.json")
-    console.log(ids.list)
+    //console.log(ids.list)
+    if (msg.member.voiceChannel) {
+        var server = servers[msg.guild.id]
+        var list = ids.list
+        shuffle(list)
+        list.forEach(song => {
+            server.queue.push(song)
+        })
+        msg.channel.send("Congrats, the queue is now " + (server.queue.length - 1) + " songs long.")
+    } else {
+        msg.reply("you must be in the voice channel to add songs.")
+    }
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1))
+        ;[array[i], array[j]] = [array[j], array[i]]
+    }
 }
 
 function jsonParse() {
@@ -375,11 +396,16 @@ bot.on("message", function(receivedMessage) {
                 break
             case "skip":
                 servers[receivedMessage.guild.id].dispatcher.end()
+                receivedMessage.channel.send("Skipped! Now playing: " + servers[receivedMessage.guild.id].queue[0])
+                break
+            case "current":
+                receivedMessage.channel.send("Currently playing: " + servers[receivedMessage.guild.id].queue[0])
                 break
             case "pause":
                 const dis = servers[receivedMessage.guild.id].dispatcher
-                if (dis.paused) dis.resume()
-                else dis.pause()
+                if (dis)
+                    if (dis.paused) dis.resume()
+                    else dis.pause()
                 break
             case "addforruss":
                 addForRuss(receivedMessage)
