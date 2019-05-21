@@ -210,18 +210,28 @@ function flipCoin() {
 }
 
 function help() {
-    msg = "Available commands:\n"
+    msg = "Command form:```json\n\"<Prefix><Command> <Argument>\"\n```"
+    msg += "Available Prefixes:```json\n\"!  /  \\  ?\"\n```"
+    msg += "Available Commands:\n"
 
-    msg += "__!ping__\n    Replies with Pong!\n"
-    msg += "__!pew__\n    Shoots back\n"
-    msg += "__!magic__\n    Ask me a question\n"
-    msg += "__!ah__\n    ~~Screams~~ Deprecated\n"
-    msg += "__!roll__\n    Roll <number of dice>d<number of sides> dice\n"
-    msg += "__!pic__\n    Returns my Picture\n"
-    msg += "__!flip__\n    Flips a coin\n"
-    msg += "__!purpose__\n    What is my purpose?\n"
+    msg += "__Ping__\n    Replies with Pong!\n"
+    msg += "__Pew__\n    Shoots back.\n"
+    msg += "__Magic__\n    Ask me a question!\n"
+    msg += "__Ah__\n    \\*Screams in `Deprecated`\\*\n"
+    msg += "__Roll__\n```json\n\"Roll <number of dice>d<number of sides> dice.\"\n```"
+    msg += "__Pic__\n    Returns my Picture.\n"
+    msg += "__Flip__\n    Flips a coin.\n"
+    msg += "__Purpose__```json\n\"What is my purpose?\"\n```"
+    msg += "__Join__\n    Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n"
+    msg += "__Leave__\n    Leaves the voice channel and erases the queue.\n"
+    msg += "__Add__\n    Adds a single YouTube video to the end of the queue.\n"
+    msg += "__AddFirst__\n    Adds a single YouTube video to the beginning of the queue.\n"
+    msg += "__Skip__\n    Skips the currently playing song and starts the next up in the queue.\n"
+    msg += "__Current__\n    Returns with the current song playing.\n"
+    msg += "__Pause__\n    Pauses or resumes the current song.\n"
+    msg += "__List__\n    Gives a list of the first five songs in the queue\n"
 
-    msg += "__!help__\n    This command"
+    msg += "__Help__\n    This command"
     return msg
 }
 
