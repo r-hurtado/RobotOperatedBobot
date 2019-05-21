@@ -205,23 +205,23 @@ function rollDice(args) {
 
 function flipCoin() {
     var stmt = Math.floor(Math.random() * 2)
-    if (stmt == 0) return "./tails.png"
-    return "./heads.png"
+    if (stmt == 0) return "./Pics/tails.png"
+    return "./Pics/heads.png"
 }
 
 function help() {
-    msg = "Command form:```json\n\"<Prefix><Command> <Argument>\"\n```"
-    msg += "Available Prefixes:```json\n\"!  /  \\  ?\"\n```"
+    msg = 'Command form:```json\n"<Prefix><Command> <Argument>"\n```'
+    msg += 'Available Prefixes:```json\n"!  /  \\  ?"\n```'
     msg += "Available Commands:\n"
 
     msg += "__Ping__\n    Replies with Pong!\n"
     msg += "__Pew__\n    Shoots back.\n"
     msg += "__Magic__\n    Ask me a question!\n"
     msg += "__Ah__\n    \\*Screams in `Deprecated`\\*\n"
-    msg += "__Roll__\n```json\n\"Roll <number of dice>d<number of sides> dice.\"\n```"
+    msg += '__Roll__\n```json\n"Roll <number of dice>d<number of sides> dice."\n```'
     msg += "__Pic__\n    Returns my Picture.\n"
     msg += "__Flip__\n    Flips a coin.\n"
-    msg += "__Purpose__```json\n\"What is my purpose?\"\n```"
+    msg += '__Purpose__```json\n"What is my purpose?"\n```'
     msg += "__Join__\n    Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n"
     msg += "__Leave__\n    Leaves the voice channel and erases the queue.\n"
     msg += "__Add__\n    Adds a single YouTube video to the end of the queue.\n"
@@ -350,87 +350,116 @@ function jsonParse() {
     })
 }
 
+function includesStr(receivedMessage) {
+    const channel = receivedMessage.channel
+    const mentions = receivedMessage.mentions.users
+    if (mentions.find(val => val.username === bot.user.username)) channel.send("Don't @ me.")
+
+    const msg = receivedMessage.content.toLowerCase()
+    if (msg.includes("ocelot")) channel.send("https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
+    if (msg.includes("luna"))
+        channel.send(new Discord.Attachment("./Pics/Luna.png")).catch(error => {
+            receivedMessage.channel.send("Error: " + error.message)
+        })
+}
+
+function sarcasticResponse(msg) {
+    var stmt = Math.floor(Math.random() * 2)
+    var str = ""
+    switch (stmt) {
+        case 0:
+            str = "You know nothing."
+            break
+        case 1:
+            str = "Something else."
+            break
+    }
+    msg.channel.send(str)
+}
+
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
-    var prefix = receivedMessage.content.substring(0, 1)
-    if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
-        var args = receivedMessage.content.substring(1).split(" ")
-        var cmd = args[0]
+    if (receivedMessage.author !== bot.user) {
+        if (receivedMessage.author.username == "miecatt" && receivedMessage.channel.guild.id == 312816442460602368) sarcasticResponse(receivedMessage)
+        var prefix = receivedMessage.content.substring(0, 1)
+        if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
+            var args = receivedMessage.content.substring(1).split(" ")
+            var cmd = args[0]
 
-        switch (cmd.toLowerCase()) {
-            case "ping":
-                receivedMessage.channel.send("Pong!")
-                break
-            case "pew":
-                receivedMessage.channel.send("PEWPEWPEW!")
-                break
-            case "magic":
-                receivedMessage.channel.send(magicBall(receivedMessage.author.toString()))
-                break
-            case "ah":
-                receivedMessage.channel.send("This command is broken, and has since been deprecated.")
-                break
-            case "roll":
-                receivedMessage.channel.send(rollDice(args[1])).catch(error => {
-                    receivedMessage.channel.send("Error: " + error.message)
-                })
-                break
-            case "pic":
-                receivedMessage.channel.send(new Discord.Attachment("C:\\Users\\miecatt\\Pictures\\Saved Pictures\\ROB.png")).catch(error => {
-                    receivedMessage.channel.send("Error: " + error.message)
-                })
-                break
-            case "flip":
-                receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {
-                    receivedMessage.channel.send("Error: " + error.message)
-                })
-                break
-            case "help":
-                receivedMessage.channel.send(help())
-                break
-            case "purpose":
-                receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp")
-                break
-            case "join":
-                joinChannel(receivedMessage, args[1])
-                break
-            case "leave":
-                leaveChannel(receivedMessage)
-                break
-            case "add":
-                addSong(receivedMessage, args[1])
-                break
-            case "addfirst":
-                addSong(receivedMessage, args[1], true)
-                break
-            case "skip":
-                servers[receivedMessage.guild.id].dispatcher.end()
-                receivedMessage.channel.send("Skipped! Now playing: " + servers[receivedMessage.guild.id].queue[0])
-                break
-            case "current":
-                receivedMessage.channel.send("Currently playing: " + servers[receivedMessage.guild.id].queue[0])
-                break
-            case "pause":
-                const dis = servers[receivedMessage.guild.id].dispatcher
-                if (dis)
-                    if (dis.paused) dis.resume()
-                    else dis.pause()
-                break
-            case "addforruss":
-                addForRuss(receivedMessage)
-                break
-            case "list":
-                listSongs(receivedMessage)
-                break
-            case "json":
-                // Only used for intermediary purposes
-                //jsonParse()
-                break
-            // Just add any case commands if you want to..
+            switch (cmd.toLowerCase()) {
+                case "ping":
+                    receivedMessage.channel.send("Pong!")
+                    break
+                case "pew":
+                    receivedMessage.channel.send("PEWPEWPEW!")
+                    break
+                case "magic":
+                    receivedMessage.channel.send(magicBall(receivedMessage.author.toString()))
+                    break
+                case "ah":
+                    receivedMessage.channel.send("This command is broken, and has since been deprecated.")
+                    break
+                case "roll":
+                    receivedMessage.channel.send(rollDice(args[1])).catch(error => {
+                        receivedMessage.channel.send("Error: " + error.message)
+                    })
+                    break
+                case "pic":
+                    receivedMessage.channel.send(new Discord.Attachment("./Pics/ROB.png")).catch(error => {
+                        receivedMessage.channel.send("Error: " + error.message)
+                    })
+                    break
+                case "flip":
+                    receivedMessage.channel.send("Drum roll, please...")
+                    receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {
+                        receivedMessage.channel.send("Error: " + error.message)
+                    })
+                    break
+                case "help":
+                    receivedMessage.channel.send(help())
+                    break
+                case "purpose":
+                    receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp")
+                    break
+                case "join":
+                    joinChannel(receivedMessage, args[1])
+                    break
+                case "leave":
+                    leaveChannel(receivedMessage)
+                    break
+                case "add":
+                    addSong(receivedMessage, args[1])
+                    break
+                case "addfirst":
+                    addSong(receivedMessage, args[1], true)
+                    break
+                case "skip":
+                    servers[receivedMessage.guild.id].dispatcher.end()
+                    receivedMessage.channel.send("Skipped! Now playing: " + servers[receivedMessage.guild.id].queue[0])
+                    break
+                case "current":
+                    receivedMessage.channel.send("Currently playing: " + servers[receivedMessage.guild.id].queue[0])
+                    break
+                case "pause":
+                    const dis = servers[receivedMessage.guild.id].dispatcher
+                    if (dis)
+                        if (dis.paused) dis.resume()
+                        else dis.pause()
+                    break
+                case "addforruss":
+                    addForRuss(receivedMessage)
+                //break
+                case "list":
+                    listSongs(receivedMessage)
+                    break
+                case "json":
+                    // Only used for intermediary purposes
+                    //jsonParse()
+                    break
+                // Just add any case commands if you want to..
+            }
         }
+        includesStr(receivedMessage)
     }
-    mention = receivedMessage.mentions.users.first()
-    if (mention == bot.user) receivedMessage.channel.send("Don't @ me.")
-    if (receivedMessage.content.toLowerCase().includes("ocelot")) receivedMessage.channel.send("https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
 })
