@@ -350,21 +350,26 @@ function jsonParse() {
     })
 }
 
-function includesStr(receivedMessage) {
-    const channel = receivedMessage.channel
-    const mentions = receivedMessage.mentions.users
-    if (mentions.find(val => val.username === bot.user.username)) channel.send("Don't @ me.")
-
-    const msg = receivedMessage.content.toLowerCase()
-    if (msg.includes("ocelot")) channel.send("https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
-    if (msg.includes("luna"))
-        channel.send(new Discord.Attachment("./Pics/Luna.png")).catch(error => {
-            receivedMessage.channel.send("Error: " + error.message)
+function includesStr(msg, str, reply, attach = false) {
+    if (msg.content.toLowerCase().includes(str)) {
+        if (attach) reply = new Discord.Attachment(reply)
+        msg.channel.send(reply).catch(error => {
+            msg.channel.send("Error: " + error.message)
         })
+    }
+}
+
+function checkStr(receivedMessage) {
+    //const channel = receivedMessage.channel
+    const mentions = receivedMessage.mentions.users
+    if (mentions.find(val => val.username === bot.user.username)) receivedMessage.channel.send("Don't @ me.")
+
+    includesStr(receivedMessage, "ocelot", "https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
+    includesStr(receivedMessage, "luna", "./Pics/Luna.png", true)
 }
 
 function sarcasticResponse(msg) {
-    var stmt = Math.floor(Math.random() * 2)
+    var stmt = Math.floor(Math.random() * 3)
     var str = ""
     switch (stmt) {
         case 0:
@@ -372,6 +377,9 @@ function sarcasticResponse(msg) {
             break
         case 1:
             str = "Something else."
+            break
+        case 2:
+            str = "Sarcastic response."
             break
     }
     msg.channel.send(str)
@@ -381,7 +389,8 @@ bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (receivedMessage.author !== bot.user) {
-        if (receivedMessage.author.username == "miecatt" && receivedMessage.channel.guild.id == 312816442460602368) sarcasticResponse(receivedMessage)
+        if (receivedMessage.author.username == "miecatt")
+            if (receivedMessage.channel.type == "text") if (receivedMessage.channel.guild.id == 312816442460602368) sarcasticResponse(receivedMessage)
         var prefix = receivedMessage.content.substring(0, 1)
         if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
             var args = receivedMessage.content.substring(1).split(" ")
@@ -460,6 +469,6 @@ bot.on("message", function(receivedMessage) {
                 // Just add any case commands if you want to..
             }
         }
-        includesStr(receivedMessage)
+        checkStr(receivedMessage)
     }
 })
