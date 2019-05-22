@@ -368,7 +368,7 @@ function includesStr(msg, str, reply, attach = false) {
 }
 
 function checkStr(receivedMessage) {
-    //const channel = receivedMessage.channel
+    const lower = receivedMessage.content.toLowerCase()
     const mentions = receivedMessage.mentions.users
     if (mentions.find(val => val.username === bot.user.username)) receivedMessage.channel.send("Don't @ me.")
 
@@ -377,7 +377,7 @@ function checkStr(receivedMessage) {
 
     // For Travis' server.
     if (receivedMessage.channel.type == "text" && receivedMessage.channel.guild.id == 312816442460602368) {
-        if (receivedMessage.content.toLowerCase().includes("travis")) {
+        if (lower.includes("travis")) {
             receivedMessage
                 .react("🇹") //T
                 .then(() => receivedMessage.react("🇷")) //R
@@ -390,6 +390,11 @@ function checkStr(receivedMessage) {
                 })
         }
         includesStr(receivedMessage, "russ", "Russ? Press 1 to kick.")
+    }
+
+    if (lower.includes("rob") || lower.includes("r.o.b.")) {
+        const exampleEmbed = new Discord.RichEmbed().setColor("LUMINOUS_VIVID_PINK").setTitle("Sup?")
+        receivedMessage.channel.send(exampleEmbed)
     }
 }
 
@@ -408,6 +413,24 @@ function sarcasticResponse(msg) {
             break
     }
     msg.channel.send(str)
+}
+
+function sendEmbed(msg) {
+    const exampleEmbed = new Discord.RichEmbed().setColor("LUMINOUS_VIVID_PINK").setTitle("Sup?")
+    //.setURL('https://discord.js.org/')
+    //.setAuthor('miecatt')
+    //.setDescription('Some description here')
+    //.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+    //.addField('Regular field title', 'Some value here')
+    //.addBlankField()
+    //.addField('Inline field title', 'Some value here', true)
+    //.addField('Inline field title', 'Some value here', true)
+    //.addField('Inline field title', 'Some value here', true)
+    //.setImage('https://i.imgur.com/wSTFkRM.png')
+    //.setTimestamp()
+    //.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+
+    msg.channel.send(exampleEmbed)
 }
 
 bot.on("message", function(receivedMessage) {
@@ -494,6 +517,8 @@ bot.on("message", function(receivedMessage) {
                     // Only used for intermediary purposes
                     //jsonParse()
                     break
+                case "rob":
+                    sendEmbed(receivedMessage)
                 // Just add any case commands if you want to..
             }
         }
