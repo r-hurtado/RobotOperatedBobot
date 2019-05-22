@@ -353,9 +353,17 @@ function jsonParse() {
 function includesStr(msg, str, reply, attach = false) {
     if (msg.content.toLowerCase().includes(str)) {
         if (attach) reply = new Discord.Attachment(reply)
-        msg.channel.send(reply).catch(error => {
-            msg.channel.send("Error: " + error.message)
-        })
+        msg.channel
+            .send(reply)
+            .then(() => {
+                if (str == "russ") {
+                    const emoji = msg.guild.emojis.find(emoji => emoji.name === "1_")
+                    msg.channel.lastMessage.react(emoji)
+                }
+            })
+            .catch(error => {
+                msg.channel.send("Error: " + error.message)
+            })
     }
 }
 
@@ -366,6 +374,8 @@ function checkStr(receivedMessage) {
 
     includesStr(receivedMessage, "ocelot", "https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
     includesStr(receivedMessage, "luna", "./Pics/Luna.png", true)
+     // For Travis' server.
+    if (receivedMessage.channel.type == "text") if (receivedMessage.channel.guild.id == 312816442460602368) includesStr(receivedMessage, "russ", "Russ? Press 1 to kick.")
 }
 
 function sarcasticResponse(msg) {
@@ -389,7 +399,7 @@ bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (receivedMessage.author !== bot.user) {
-        if (receivedMessage.author.username == "miecatt")
+        if (receivedMessage.author.username == "miecatt") // For Travis' server.
             if (receivedMessage.channel.type == "text") if (receivedMessage.channel.guild.id == 312816442460602368) sarcasticResponse(receivedMessage)
         var prefix = receivedMessage.content.substring(0, 1)
         if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
