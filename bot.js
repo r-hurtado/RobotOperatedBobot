@@ -525,8 +525,11 @@ bot.on("message", function(receivedMessage) {
                     // Only used for intermediary purposes
                     //jsonParse()
                     break
-                case "rob":
-                    sendEmbed(receivedMessage)
+                case "test":
+                    if(receivedMessage.author.id ==='276586260326383617')
+                    {
+                        console.log(receivedMessage.author)
+                    }
                 // Just add any case commands if you want to..
             }
         }
