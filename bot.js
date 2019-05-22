@@ -374,6 +374,7 @@ function checkStr(receivedMessage) {
 
     includesStr(receivedMessage, "ocelot", "https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
     includesStr(receivedMessage, "luna", "./Pics/Luna.png", true)
+    includesStr(receivedMessage, "danger", "```diff\n-DANGER!\n```")
 
     // For Travis' server.
     if (receivedMessage.channel.type == "text" && receivedMessage.channel.guild.id == 312816442460602368) {
