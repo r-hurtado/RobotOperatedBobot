@@ -11,6 +11,10 @@ bot.on("ready", () => {
     bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
 })
 
+bot.on("error", (e) => console.error(e));
+bot.on("warn", (e) => console.warn(e));
+bot.on("debug", (e) => console.info(e));
+
 bot.login(auth.token)
 
 function magicBall(user) {
@@ -404,13 +408,16 @@ function sarcasticResponse(msg) {
     var str = ""
     switch (stmt) {
         case 0:
-            str = "You know nothing."
+            str = "Shut up, Russ"
             break
         case 1:
-            str = "Something else."
+            str = "Wait, no, that's wrong."
             break
         case 2:
-            str = "Sarcastic response."
+            str = "**Sarcastic response.**"
+            break
+        case 3:
+            str = "Math Bot Here: You're wrong because I'm Russ and I am math."
             break
     }
     msg.channel.send(str)
