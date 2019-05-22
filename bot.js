@@ -374,8 +374,23 @@ function checkStr(receivedMessage) {
 
     includesStr(receivedMessage, "ocelot", "https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
     includesStr(receivedMessage, "luna", "./Pics/Luna.png", true)
-     // For Travis' server.
-    if (receivedMessage.channel.type == "text") if (receivedMessage.channel.guild.id == 312816442460602368) includesStr(receivedMessage, "russ", "Russ? Press 1 to kick.")
+
+    // For Travis' server.
+    if (receivedMessage.channel.type == "text" && receivedMessage.channel.guild.id == 312816442460602368) {
+        if (receivedMessage.content.toLowerCase().includes("travis")) {
+            receivedMessage
+                .react("🇹") //T
+                .then(() => receivedMessage.react("🇷")) //R
+                .then(() => receivedMessage.react("🇦")) //A
+                .then(() => receivedMessage.react("🇻")) //V
+                .then(() => receivedMessage.react("🇮")) //I
+                .then(() => receivedMessage.react("🇸")) //S
+                .catch(error => {
+                    msg.channel.send("Error: " + error.message)
+                })
+        }
+        includesStr(receivedMessage, "russ", "Russ? Press 1 to kick.")
+    }
 }
 
 function sarcasticResponse(msg) {
@@ -399,8 +414,11 @@ bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (receivedMessage.author !== bot.user) {
-        if (receivedMessage.author.username == "miecatt") // For Travis' server.
-            if (receivedMessage.channel.type == "text") if (receivedMessage.channel.guild.id == 312816442460602368) sarcasticResponse(receivedMessage)
+        if (receivedMessage.author.username == "miecatt")
+            if (receivedMessage.channel.type == "text")
+                if (receivedMessage.channel.guild.id == 312816442460602368)
+                    // For Travis' server.
+                    sarcasticResponse(receivedMessage)
         var prefix = receivedMessage.content.substring(0, 1)
         if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
             var args = receivedMessage.content.substring(1).split(" ")
