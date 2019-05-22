@@ -11,8 +11,8 @@ bot.on("ready", () => {
     bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
 })
 
-bot.on("error", (e) => console.error(e));
-bot.on("warn", (e) => console.warn(e));
+bot.on("error", e => console.error(e))
+bot.on("warn", e => console.warn(e))
 //bot.on("debug", (e) => console.info(e));
 
 bot.login(auth.token)
@@ -408,7 +408,7 @@ function sarcasticResponse(msg) {
     var str = ""
     switch (stmt) {
         case 0:
-            str = "Shut up, Russ"
+            str = "Shut up, " + msg.author.toString()
             break
         case 1:
             str = "Wait, no, that's wrong."
@@ -417,7 +417,7 @@ function sarcasticResponse(msg) {
             str = "**Sarcastic response.**"
             break
         case 3:
-            str = "Math Bot Here: You're wrong because I'm Russ and I am math."
+            str = "Math Bot Here: You're wrong because I'm " + msg.author.toString() + " and I am math."
             break
     }
     msg.channel.send(str)
