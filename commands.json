@@ -1,0 +1,88 @@
+{
+    "prefixes":
+    [
+        "!",
+        "/",
+        "//",
+        "?"
+    ],
+    "commands":
+    [
+        {
+            "name": "Ping",
+            "help": "Replies with Pong!"
+        },
+        {
+            "name": "Pew",
+            "help": "Shoots back."
+        },
+        {
+            "name": "Magic",
+            "help": "Ask me a question!"
+        },
+        {
+            "name": "Ah",
+            "help": "\\*Screams in `Deprecated`\\*"
+        },
+        {
+            "name": "Roll",
+            "help": "```json\n\"Roll <number of dice>d<number of sides> dice.\"\n```"
+        },
+        {
+            "name": "Pic",
+            "help": "Returns my Picture."
+        },
+        {
+            "name": "Flip",
+            "help": "Flips a coin."
+        },
+        {
+            "name": "Help",
+            "help": "This command."
+        },
+        {
+            "name": "Purpose",
+            "help": "```json\n\"What is my purpose?\"\n```"
+        },
+        {
+            "name": "Join",
+            "help": "Joins the voice channel you are in and plays the audio of the YouTube video you give it."
+        },
+        {
+            "name": "Leave",
+            "help": "Leaves the voice channel and erases the queue."
+        },
+        {
+            "name": "Add",
+            "help": "Adds a single YouTube video to the end of the queue."
+        },
+        {
+            "name": "AddFirst",
+            "help": "Adds a single YouTube video to the beginning of the queue."
+        },
+        {
+            "name": "Skip",
+            "help": "Skips the currently playing song and starts the next up in the queue."
+        },
+        {
+            "name": "Current",
+            "help": "Returns with the current song playing."
+        },
+        {
+            "name": "Pause",
+            "help": "Pauses or resumes the current song."
+        },
+        {
+            "name": "AddForRuss",
+            "help": "Adds a shuffled list of over 900 songs to the queue. Curated by miecatt."
+        },
+        {
+            "name": "List",
+            "help": "Gives a list of the first five songs in the queue."
+        },
+        {
+            "name": "Test",
+            "help": "A function used for testing purposes"
+        }
+    ]
+}

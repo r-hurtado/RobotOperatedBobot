@@ -1,14 +1,25 @@
+const auth = require("./auth.json")
+const commandsJSON = require("./commands.json")
 const Discord = require("discord.js")
-var auth = require("./auth.json")
-const bot = new Discord.Client()
 const ytdl = require("ytdl-core")
+const bot = new Discord.Client()
 
 global.servers = {}
+var miecatt = {}
 
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
     bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
+
+    miecatt = bot.fetchUser('276586260326383617')
+        .then(user => bot.emit("miecatt", user))
+        .catch(console.error)
+})
+
+bot.on("miecatt", user => {
+    miecatt = user
+    console.log(miecatt)
 })
 
 bot.on("error", e => console.error(e))
@@ -214,28 +225,11 @@ function flipCoin() {
 }
 
 function help() {
-    msg = 'Command form:```json\n"<Prefix><Command> <Argument>"\n```'
-    msg += 'Available Prefixes:```json\n"!  /  \\  ?"\n```'
-    msg += "Available Commands:\n"
+    var msg = ""
+    commandsJSON.commands.foreach(c => {
+        msg += "__" + c.name + "__\n    " + c.help + "\n"
+    })
 
-    msg += "__Ping__\n    Replies with Pong!\n"
-    msg += "__Pew__\n    Shoots back.\n"
-    msg += "__Magic__\n    Ask me a question!\n"
-    msg += "__Ah__\n    \\*Screams in `Deprecated`\\*\n"
-    msg += '__Roll__\n```json\n"Roll <number of dice>d<number of sides> dice."\n```'
-    msg += "__Pic__\n    Returns my Picture.\n"
-    msg += "__Flip__\n    Flips a coin.\n"
-    msg += '__Purpose__```json\n"What is my purpose?"\n```'
-    msg += "__Join__\n    Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n"
-    msg += "__Leave__\n    Leaves the voice channel and erases the queue.\n"
-    msg += "__Add__\n    Adds a single YouTube video to the end of the queue.\n"
-    msg += "__AddFirst__\n    Adds a single YouTube video to the beginning of the queue.\n"
-    msg += "__Skip__\n    Skips the currently playing song and starts the next up in the queue.\n"
-    msg += "__Current__\n    Returns with the current song playing.\n"
-    msg += "__Pause__\n    Pauses or resumes the current song.\n"
-    msg += "__List__\n    Gives a list of the first five songs in the queue\n"
-
-    msg += "__Help__\n    This command"
     return msg
 }
 
@@ -333,27 +327,6 @@ function shuffle(array) {
     }
 }
 
-function jsonParse() {
-    var ids = []
-    for (var i = 1; i < 20; i++) {
-        var data = require("./PlaylistIDs/page" + i + ".json")
-        data.items.forEach(id => {
-            ids.push(id.contentDetails.videoId)
-        })
-    }
-    //console.log(ids)
-    //console.log(ids.length)
-
-    var fs = require("fs")
-    var data = ""
-    ids.forEach(id => {
-        data += "https://youtu.be/" + id + "\n"
-    })
-    fs.writeFile("../ids.txt", data, err => {
-        if (err) console.log(err)
-    })
-}
-
 function includesStr(msg, str, reply, attach = false) {
     if (msg.content.toLowerCase().includes(str)) {
         if (attach) reply = new Discord.Attachment(reply)
@@ -441,6 +414,11 @@ function sendEmbed(msg) {
     msg.channel.send(exampleEmbed)
 }
 
+function clean(text) {
+    if (typeof text === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203))
+    else return text
+}
+
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
@@ -450,89 +428,99 @@ bot.on("message", function(receivedMessage) {
                 if (receivedMessage.channel.guild.id == 312816442460602368)
                     // For Travis' server.
                     sarcasticResponse(receivedMessage)
-        var prefix = receivedMessage.content.substring(0, 1)
-        if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
-            var args = receivedMessage.content.substring(1).split(" ")
-            var cmd = args[0]
+        //var prefix = receivedMessage.content.substring(0, 1)
 
-            switch (cmd.toLowerCase()) {
-                case "ping":
-                    receivedMessage.channel.send("Pong!")
-                    break
-                case "pew":
-                    receivedMessage.channel.send("PEWPEWPEW!")
-                    break
-                case "magic":
-                    receivedMessage.channel.send(magicBall(receivedMessage.author.toString()))
-                    break
-                case "ah":
-                    receivedMessage.channel.send("This command is broken, and has since been deprecated.")
-                    break
-                case "roll":
-                    receivedMessage.channel.send(rollDice(args[1])).catch(error => {
-                        receivedMessage.channel.send("Error: " + error.message)
-                    })
-                    break
-                case "pic":
-                    receivedMessage.channel.send(new Discord.Attachment("./Pics/ROB.png")).catch(error => {
-                        receivedMessage.channel.send("Error: " + error.message)
-                    })
-                    break
-                case "flip":
-                    receivedMessage.channel.send("Drum roll, please...")
-                    receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {
-                        receivedMessage.channel.send("Error: " + error.message)
-                    })
-                    break
-                case "help":
-                    receivedMessage.channel.send(help())
-                    break
-                case "purpose":
-                    receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp")
-                    break
-                case "join":
-                    joinChannel(receivedMessage, args[1])
-                    break
-                case "leave":
-                    leaveChannel(receivedMessage)
-                    break
-                case "add":
-                    addSong(receivedMessage, args[1])
-                    break
-                case "addfirst":
-                    addSong(receivedMessage, args[1], true)
-                    break
-                case "skip":
-                    servers[receivedMessage.guild.id].dispatcher.end()
-                    receivedMessage.channel.send("Skipped! Now playing: " + servers[receivedMessage.guild.id].queue[0])
-                    break
-                case "current":
-                    receivedMessage.channel.send("Currently playing: " + servers[receivedMessage.guild.id].queue[0])
-                    break
-                case "pause":
-                    const dis = servers[receivedMessage.guild.id].dispatcher
-                    if (dis)
-                        if (dis.paused) dis.resume()
-                        else dis.pause()
-                    break
-                case "addforruss":
-                    addForRuss(receivedMessage)
-                //break
-                case "list":
-                    listSongs(receivedMessage)
-                    break
-                case "json":
-                    // Only used for intermediary purposes
-                    //jsonParse()
-                    break
-                case "test":
-                    if(receivedMessage.author.id ==='276586260326383617')
-                    {
-                        console.log(receivedMessage.author)
+        const prefixes = commandsJSON.prefixes
+        const commands = commandsJSON.commands
+
+        //if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
+        prefixes.forEach(pre => {
+            commands.forEach(com => {
+                if (receivedMessage.content.toLowerCase().includes(pre + com.name.toLowerCase())) {
+                    var args = receivedMessage.content.substring(1).split(" ")
+                    var cmd = args[0]
+
+                    switch (com.name.toLowerCase()) {
+                        case "ping":
+                            receivedMessage.channel.send("Pong!")
+                            break
+                        case "pew":
+                            receivedMessage.channel.send("PEWPEWPEW!")
+                            break
+                        case "magic":
+                            receivedMessage.channel.send(magicBall(receivedMessage.author.toString()))
+                            break
+                        case "ah":
+                            receivedMessage.channel.send("This command is broken, and has since been deprecated.")
+                            break
+                        case "roll":
+                            receivedMessage.channel.send(rollDice(args[1])).catch(error => {
+                                receivedMessage.channel.send("Error: " + error.message)
+                            })
+                            break
+                        case "pic":
+                            receivedMessage.channel.send(new Discord.Attachment("./Pics/ROB.png")).catch(error => {
+                                receivedMessage.channel.send("Error: " + error.message)
+                            })
+                            break
+                        case "flip":
+                            receivedMessage.channel.send("Drum roll, please...")
+                            receivedMessage.channel.send(new Discord.Attachment(flipCoin())).catch(error => {
+                                receivedMessage.channel.send("Error: " + error.message)
+                            })
+                            break
+                        case "help":
+                            receivedMessage.channel.send(help())
+                            break
+                        case "purpose":
+                            receivedMessage.channel.send("https://i.giphy.com/media/Fsn4WJcqwlbtS/giphy.webp")
+                            break
+                        case "join":
+                            joinChannel(receivedMessage, args[1])
+                            break
+                        case "leave":
+                            leaveChannel(receivedMessage)
+                            break
+                        case "add":
+                            addSong(receivedMessage, args[1])
+                            break
+                        case "addfirst":
+                            addSong(receivedMessage, args[1], true)
+                            break
+                        case "skip":
+                            servers[receivedMessage.guild.id].dispatcher.end()
+                            receivedMessage.channel.send("Skipped! Now playing: " + servers[receivedMessage.guild.id].queue[0])
+                            break
+                        case "current":
+                            receivedMessage.channel.send("Currently playing: " + servers[receivedMessage.guild.id].queue[0])
+                            break
+                        case "pause":
+                            const dis = servers[receivedMessage.guild.id].dispatcher
+                            if (dis)
+                                if (dis.paused) dis.resume()
+                                else dis.pause()
+                            break
+                        case "addforruss":
+                            addForRuss(receivedMessage)
+                        //break
+                        case "list":
+                            listSongs(receivedMessage)
+                            break
+                        case "test": // Used for testing purposes.
+                            if (receivedMessage.author.id === "276586260326383617") {
+                                // miecatt
+                                receivedMessage.channel.send(".")
+                                console.log(receivedMessage.author)
+                            }
+                            break
+                        // Just add any case commands if you want to...
+                        default:
+                            receivedMessage.channel.send("Not yet implemented.")
                     }
-                // Just add any case commands if you want to..
-            }
-        }
+                }
+            })
+        })
+
         checkStr(receivedMessage)
     }
 })
