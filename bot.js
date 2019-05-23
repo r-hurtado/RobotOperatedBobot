@@ -20,7 +20,7 @@ bot.on("ready", () => {
 
 bot.on("miecatt", user => {
     miecatt = user
-    console.log(miecatt)
+    //console.log(miecatt)
 })
 
 bot.on("error", e => {
@@ -239,7 +239,7 @@ function flipCoin() {
 
 function help() {
     var msg = ""
-    commandsJSON.commands.foreach(c => {
+    commandsJSON.commands.forEach(c => {
         msg += "__" + c.name + "__\n    " + c.help + "\n"
     })
 

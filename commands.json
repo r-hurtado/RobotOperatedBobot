@@ -26,7 +26,7 @@
         },
         {
             "name": "Roll",
-            "help": "```json\n\"Roll <number of dice>d<number of sides> dice.\"\n```"
+            "help": "Roll `<number of dice>` d `<number of sides>` dice."
         },
         {
             "name": "Pic",
@@ -42,11 +42,11 @@
         },
         {
             "name": "Purpose",
-            "help": "```json\n\"What is my purpose?\"\n```"
+            "help": "*\"What is my purpose?\"*"
         },
         {
             "name": "Join",
-            "help": "Joins the voice channel you are in and plays the audio of the YouTube video you give it."
+            "help": "Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n    \\*Must be first command in chain*"
         },
         {
             "name": "Leave",
