@@ -12,7 +12,8 @@ bot.on("ready", () => {
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
     bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
 
-    miecatt = bot.fetchUser('276586260326383617')
+    miecatt = bot
+        .fetchUser("276586260326383617")
         .then(user => bot.emit("miecatt", user))
         .catch(console.error)
 })
@@ -22,8 +23,20 @@ bot.on("miecatt", user => {
     console.log(miecatt)
 })
 
-bot.on("error", e => console.error(e))
-bot.on("warn", e => console.warn(e))
+bot.on("error", e => {
+    console.error(e)
+    miecatt
+        .send("hello!")
+        .then(message => console.log(`Sent message: ${message.content}`))
+        .catch(console.error)
+})
+bot.on("warn", e => {
+    console.warn(e)
+    miecatt
+        .send("hello!")
+        .then(message => console.log(`Sent message: ${message.content}`))
+        .catch(console.error)
+})
 //bot.on("debug", (e) => console.info(e));
 
 bot.login(auth.token)
