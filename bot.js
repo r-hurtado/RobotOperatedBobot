@@ -431,6 +431,12 @@ function clean(text) {
     if (typeof text === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203))
     else return text
 }
+bot.on("test", test => {
+    test.msg.member
+        .addRole(test.role)
+        .then()
+        .catch(console.error)
+})
 
 bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
@@ -451,8 +457,6 @@ bot.on("message", function(receivedMessage) {
             commands.forEach(com => {
                 if (receivedMessage.content.toLowerCase().includes(pre + com.name.toLowerCase())) {
                     var args = receivedMessage.content.substring(1).split(" ")
-                    var cmd = args[0]
-
                     switch (com.name.toLowerCase()) {
                         case "ping":
                             receivedMessage.channel.send("Pong!")
@@ -520,10 +524,20 @@ bot.on("message", function(receivedMessage) {
                             listSongs(receivedMessage)
                             break
                         case "test": // Used for testing purposes.
+                            // miecatt
                             if (receivedMessage.author.id === "276586260326383617") {
-                                // miecatt
                                 //bot.emit("error", "hey")
                                 //console.log(receivedMessage.author)
+
+                                receivedMessage.guild
+                                    .createRole({
+                                        name: "Crustifer",
+                                        color: 1752220,
+                                        hoist: true
+                                    })
+                                    .then(role => bot.emit("test", { role: role, msg: receivedMessage }))
+                                    .catch(console.error)
+                                //console.log(receivedMessage.guild.roles)
                             }
                             break
                         // Just add any case commands if you want to...
