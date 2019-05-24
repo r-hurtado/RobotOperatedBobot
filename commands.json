@@ -10,79 +10,98 @@
     [
         {
             "name": "Ping",
-            "help": "Replies with Pong!"
+            "help": "Replies with Pong!",
+            "args": 0
         },
         {
             "name": "Pew",
-            "help": "Shoots back."
+            "help": "Shoots back.",
+            "args": 0
         },
         {
             "name": "Magic",
-            "help": "Ask me a question!"
+            "help": "Ask me a question!",
+            "args": 0
         },
         {
             "name": "Ah",
-            "help": "\\*Screams in `Deprecated`\\*"
+            "help": "\\*Screams in `Deprecated`\\*",
+            "args": 0
         },
         {
             "name": "Roll",
-            "help": "Roll `<number of dice>` d `<number of sides>` dice."
+            "help": "Roll `<number of dice>` d `<number of sides>` dice.",
+            "args": 1
         },
         {
             "name": "Pic",
-            "help": "Returns my Picture."
+            "help": "Returns my Picture.",
+            "args": 0
         },
         {
             "name": "Flip",
-            "help": "Flips a coin."
+            "help": "Flips a coin.",
+            "args": 0
         },
         {
             "name": "Help",
-            "help": "This command."
+            "help": "This command.",
+            "args": 0
         },
         {
             "name": "Purpose",
-            "help": "*\"What is my purpose?\"*"
+            "help": "*\"What is my purpose?\"*",
+            "args": 0
         },
         {
             "name": "Join",
-            "help": "Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n    \\*Must be first command in chain*"
+            "help": "Joins the voice channel you are in and plays the audio of the YouTube video you give it.\n    \\*Must be first command in chain*",
+            "args": 1
         },
         {
             "name": "Leave",
-            "help": "Leaves the voice channel and erases the queue."
+            "help": "Leaves the voice channel and erases the queue.",
+            "args": 0
         },
         {
             "name": "Add",
-            "help": "Adds a single YouTube video to the end of the queue."
+            "help": "Adds a single YouTube video to the end of the queue.",
+            "args": 1
         },
         {
             "name": "AddFirst",
-            "help": "Adds a single YouTube video to the beginning of the queue."
+            "help": "Adds a single YouTube video to the beginning of the queue.",
+            "args": 1
         },
         {
             "name": "Skip",
-            "help": "Skips the currently playing song and starts the next up in the queue."
+            "help": "Skips the currently playing song and starts the next up in the queue.",
+            "args": 0
         },
         {
             "name": "Current",
-            "help": "Returns with the current song playing."
+            "help": "Returns with the current song playing.",
+            "args": 0
         },
         {
             "name": "Pause",
-            "help": "Pauses or resumes the current song."
+            "help": "Pauses or resumes the current song.",
+            "args": 0
         },
         {
             "name": "AddForRuss",
-            "help": "Adds a shuffled list of over 900 songs to the queue. Curated by miecatt."
+            "help": "Adds a shuffled list of over 900 songs to the queue. Curated by miecatt.",
+            "args": 0
         },
         {
             "name": "List",
-            "help": "Gives a list of the first five songs in the queue."
+            "help": "Gives a list of the first five songs in the queue.",
+            "args": 0
         },
         {
             "name": "Test",
-            "help": "A function used for testing purposes"
+            "help": "A function used for testing purposes",
+            "args": 0
         }
     ]
 }
