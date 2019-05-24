@@ -9,10 +9,15 @@
     },
     "author": "miecatt",
     "dependencies": {
+        "@discordjs/uws": "^10.149.0",
+        "better-sqlite-pool": "github:eslachance/better-sqlite-pool",
+        "bufferutil": "^4.0.0",
         "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
         "discord.js": "^11.5.0",
+        "enmap": "^4.8.7",
         "ffmpeg-binaries": "^3.2.2",
         "ffmpeg-static": "^2.4.0",
+        "libsodium-wrappers": "^0.7.3",
         "opusscript": "0.0.6",
         "winston": "^3.2.1",
         "ytdl-core": "^0.29.2"
