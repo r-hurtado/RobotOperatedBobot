@@ -1,4 +1,4 @@
-const auth = require("./auth.json")
+const auth = require("../auth.json")
 const commandsJSON = require("./commands.json")
 const Discord = require("discord.js")
 const ytdl = require("ytdl-core")
@@ -26,14 +26,14 @@ bot.on("miecatt", user => {
 bot.on("error", e => {
     console.error(e)
     miecatt
-        .send("hello!")
+        .send(e)
         .then(message => console.log(`Sent message: ${message.content}`))
         .catch(console.error)
 })
 bot.on("warn", e => {
     console.warn(e)
     miecatt
-        .send("hello!")
+        .send(e)
         .then(message => console.log(`Sent message: ${message.content}`))
         .catch(console.error)
 })
@@ -522,8 +522,8 @@ bot.on("message", function(receivedMessage) {
                         case "test": // Used for testing purposes.
                             if (receivedMessage.author.id === "276586260326383617") {
                                 // miecatt
-                                receivedMessage.channel.send(".")
-                                console.log(receivedMessage.author)
+                                //bot.emit("error", "hey")
+                                //console.log(receivedMessage.author)
                             }
                             break
                         // Just add any case commands if you want to...
