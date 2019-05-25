@@ -17,7 +17,7 @@ bot.on("ready", () => {
         .then(user => bot.emit("miecatt", user))
         .catch(console.error)
 
-    bot.points = new Enmap({ name: "points" })
+    bot.points = new Enmap({ name: "points", dataDir:"../DiscordData"})
 })
 
 bot.on("miecatt", user => {
@@ -434,45 +434,47 @@ function sendEmbed(msg) {
 }
 
 function rank(msg, single = false) {
-    const max = 5
-    const rankEmbed = new Discord.RichEmbed().setColor(1752220).setTitle("Rankings")
-    //.setURL('https://discord.js.org/')
-    //.setAuthor('miecatt')
-    //.setDescription('Some description here')
-    //.setThumbnail('https://i.imgur.com/wSTFkRM.png')
-    //.addField('Regular field title', 'Some value here')
-    //.addBlankField()
-    //.setImage('https://i.imgur.com/wSTFkRM.png')
-    //.setTimestamp()
-    //.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    if (msg.guild) {
+        const max = 5
+        const rankEmbed = new Discord.RichEmbed().setColor(1752220).setTitle(`Rankings for __${msg.guild.name}__`)
+        //.setURL('https://discord.js.org/')
+        //.setAuthor('miecatt')
+        //.setDescription('Some description here')
+        .setThumbnail(msg.guild.iconURL)
+        //.addField('Regular field title', 'Some value here')
+        //.addBlankField()
+        //.setImage('https://i.imgur.com/wSTFkRM.png')
+        //.setTimestamp()
+        //.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
 
-    const keys = bot.points.indexes.filter(key => key.includes(`${msg.guild.id}-`))
+        const keys = bot.points.indexes.filter(key => key.includes(`${msg.guild.id}-`))
 
-    var guildUsers = []
-    keys.forEach(key => {
-        var val = bot.points.get(key)
-        bot.users.array().forEach(user => {
-            //console.log(user)
-            if (user.id === val.user) guildUsers.push({ val: val, user: user })
+        var guildUsers = []
+        keys.forEach(key => {
+            var val = bot.points.get(key)
+            bot.users.array().forEach(user => {
+                //console.log(user)
+                if (user.id === val.user) guildUsers.push({ val: val, user: user })
+            })
         })
-    })
 
-    // Sort descending
-    guildUsers.sort((a, b) => b.val.points - a.val.points)
+        // Sort descending
+        guildUsers.sort((a, b) => b.val.points - a.val.points)
 
-    if (!single) {
-        var count = 0
-        guildUsers.forEach(user => {
-            if (count++ < max) {
-                rankEmbed.addField(`#${count} ${user.user.username}`, `Level:  ${user.val.level}\nPoints: ${user.val.points}`)
-            }
-        })
-    } else {
-        var placement = guildUsers.findIndex(val => val.user.username === msg.author.username)
-        rankEmbed.addField(`${msg.author.username}`, `#${placement + 1}/${msg.guild.members.array().length}`)
+        if (!single) {
+            var count = 0
+            guildUsers.forEach(user => {
+                if (count++ < max) {
+                    rankEmbed.addField(`#${count} ${user.user.username}`, `Level:  ${user.val.level}\nPoints: ${user.val.points}`)
+                }
+            })
+        } else {
+            var placement = guildUsers.findIndex(val => val.user.username === msg.author.username)
+            rankEmbed.addField(`${msg.author.username}`, `#${placement + 1}/${msg.guild.memberCount}`)
+        }
+
+        msg.channel.send(rankEmbed)
     }
-
-    msg.channel.send(rankEmbed)
 }
 
 function clean(text) {
@@ -612,7 +614,7 @@ bot.on("message", function(receivedMessage) {
                                 bot.users.array().forEach(user => {
                                     console.log(user.username + ": " + user.id)
                                 })*/
-                                console.log(bot.points)
+                                console.log(receivedMessage.guild.afkChannel.bitrate)
                             }
                             break
                         // Just add any case commands if you want to...
