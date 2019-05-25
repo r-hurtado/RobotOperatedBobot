@@ -8,7 +8,6 @@ const Enmap = require("enmap")
 global.servers = {}
 var miecatt = {}
 
-bot.login(auth.token)
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
@@ -18,7 +17,7 @@ bot.on("ready", () => {
         .then(user => bot.emit("miecatt", user))
         .catch(console.error)
 
-    bot.points = new Enmap({ name: "points", dataDir:"../DiscordData"})
+    bot.points = new Enmap({ name: "points", dataDir:"../DiscordData" })
 })
 
 bot.on("miecatt", user => {
@@ -41,6 +40,8 @@ bot.on("warn", e => {
         .catch(console.error)
 })
 //bot.on("debug", (e) => console.info(e));
+
+bot.login(auth.token)
 
 function magicBall(user) {
     var stmt = Math.floor(Math.random() * 53)
@@ -226,7 +227,7 @@ function rollDice(args) {
     sum += die
     msg += "(" + die + ") "
 
-    for (var i = 0; i < numDice; i++) {
+    for (var i = 1; i < numDice; i++) {
         die = Math.floor(Math.random() * numSides) + 1
         sum += die
         msg += "+ (" + die + ") "
@@ -238,8 +239,8 @@ function rollDice(args) {
 
 function flipCoin() {
     var stmt = Math.floor(Math.random() * 2)
-    if (stmt == 0) return "./Pics/tails.png"
-    return "./Pics/heads.png"
+    if (stmt == 0) return "./Images/tails.png"
+    return "./Images/heads.png"
 }
 
 function help() {
@@ -368,7 +369,7 @@ function checkStr(receivedMessage) {
     if (mentions.find(val => val.username === bot.user.username)) receivedMessage.channel.send("Don't @ me.")
 
     includesStr(receivedMessage, "ocelot", "https://media.giphy.com/media/TTCuvR7Zc6hva/giphy.gif")
-    includesStr(receivedMessage, "luna", "./Pics/Luna.png", true)
+    includesStr(receivedMessage, "luna", "./Images/Luna.png", true)
     includesStr(receivedMessage, "danger", "```diff\n-DANGER!\n```")
 
     // For Travis' server.
@@ -480,7 +481,6 @@ function clean(text) {
     if (typeof text === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203))
     else return text
 }
-
 bot.on("test", test => {
     test.msg.member
         .addRole(test.role)
@@ -492,12 +492,6 @@ bot.on("message", function(receivedMessage) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (receivedMessage.author !== bot.user) {
-        if (receivedMessage.author.username == "miecatt")
-            if (receivedMessage.channel.type == "text")
-                if (receivedMessage.channel.guild.id == 312816442460602368)
-                    // For Travis' server.
-                    sarcasticResponse(receivedMessage)
-
         // Points system
         if (receivedMessage.guild) {
             const key = `${receivedMessage.guild.id}-${receivedMessage.author.id}`
@@ -519,11 +513,13 @@ bot.on("message", function(receivedMessage) {
 
         const prefixes = commandsJSON.prefixes
         const commands = commandsJSON.commands
+        var commandRun = false
 
         //if (prefix == "!" || prefix == "/" || prefix == "\\" || prefix == "?") {
         prefixes.forEach(pre => {
             commands.forEach(com => {
                 if (receivedMessage.content.toLowerCase().includes(pre + com.name.toLowerCase())) {
+                    commandRun = true
                     var args = receivedMessage.content.substring(1).split(" ")
                     switch (com.name.toLowerCase()) {
                         case "ping":
@@ -544,7 +540,7 @@ bot.on("message", function(receivedMessage) {
                             })
                             break
                         case "pic":
-                            receivedMessage.channel.send(new Discord.Attachment("./Pics/ROB.png")).catch(error => {
+                            receivedMessage.channel.send(new Discord.Attachment("./Images/ROB.png")).catch(error => {
                                 receivedMessage.channel.send("Error: " + error.message)
                             })
                             break
@@ -626,5 +622,10 @@ bot.on("message", function(receivedMessage) {
         })
 
         checkStr(receivedMessage)
+        if (receivedMessage.author.username == "miecatt")
+            if (receivedMessage.channel.type == "text")
+                if (receivedMessage.channel.guild.id == 312816442460602368)
+                    // For Travis' server.
+                    sarcasticResponse(receivedMessage)
     }
 })
