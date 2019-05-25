@@ -3,6 +3,7 @@ const commandsJSON = require("./commands.json")
 const Discord = require("discord.js")
 const ytdl = require("ytdl-core")
 const bot = new Discord.Client()
+const Enmap = require("enmap")
 
 global.servers = {}
 var miecatt = {}
@@ -12,10 +13,11 @@ bot.on("ready", () => {
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
     bot.user.setActivity("those binaries, baby", { type: "PLAYING" })
 
-    miecatt = bot
-        .fetchUser("276586260326383617")
+    bot.fetchUser("276586260326383617")
         .then(user => bot.emit("miecatt", user))
         .catch(console.error)
+
+    bot.points = new Enmap({ name: "points" })
 })
 
 bot.on("miecatt", user => {
@@ -221,10 +223,14 @@ function rollDice(args) {
     if (numDice == 69 || numSides == 69) msg += "Nice.\n"
     if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
 
+    die = Math.floor(Math.random() * numSides) + 1
+    sum += die
+    msg += "(" + die + ") "
+
     for (var i = 0; i < numDice; i++) {
         die = Math.floor(Math.random() * numSides) + 1
         sum += die
-        msg += "(" + die + ") "
+        msg += "+ (" + die + ") "
     }
 
     msg += "= " + sum.toString()
@@ -427,6 +433,48 @@ function sendEmbed(msg) {
     msg.channel.send(exampleEmbed)
 }
 
+function rank(msg, single = false) {
+    const max = 5
+    const rankEmbed = new Discord.RichEmbed().setColor(1752220).setTitle("Rankings")
+    //.setURL('https://discord.js.org/')
+    //.setAuthor('miecatt')
+    //.setDescription('Some description here')
+    //.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+    //.addField('Regular field title', 'Some value here')
+    //.addBlankField()
+    //.setImage('https://i.imgur.com/wSTFkRM.png')
+    //.setTimestamp()
+    //.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+
+    const keys = bot.points.indexes.filter(key => key.includes(`${msg.guild.id}-`))
+
+    var guildUsers = []
+    keys.forEach(key => {
+        var val = bot.points.get(key)
+        bot.users.array().forEach(user => {
+            //console.log(user)
+            if (user.id === val.user) guildUsers.push({ val: val, user: user })
+        })
+    })
+
+    // Sort descending
+    guildUsers.sort((a, b) => b.val.points - a.val.points)
+
+    if (!single) {
+        var count = 0
+        guildUsers.forEach(user => {
+            if (count++ < max) {
+                rankEmbed.addField(`#${count} ${user.user.username}`, `Level:  ${user.val.level}\nPoints: ${user.val.points}`)
+            }
+        })
+    } else {
+        var placement = guildUsers.findIndex(val => val.user.username === msg.author.username)
+        rankEmbed.addField(`${msg.author.username}`, `#${placement + 1}/${msg.guild.members.array().length}`)
+    }
+
+    msg.channel.send(rankEmbed)
+}
+
 function clean(text) {
     if (typeof text === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203))
     else return text
@@ -447,7 +495,25 @@ bot.on("message", function(receivedMessage) {
                 if (receivedMessage.channel.guild.id == 312816442460602368)
                     // For Travis' server.
                     sarcasticResponse(receivedMessage)
-        //var prefix = receivedMessage.content.substring(0, 1)
+
+        // Points system
+        if (receivedMessage.guild) {
+            const key = `${receivedMessage.guild.id}-${receivedMessage.author.id}`
+            bot.points.ensure(key, {
+                user: receivedMessage.author.id,
+                guild: receivedMessage.guild.id,
+                points: 0,
+                level: 1
+            })
+            bot.points.inc(key, "points")
+            const curLevel = Math.floor(Math.sqrt(bot.points.get(key, "points")))
+
+            // Level up message
+            if (bot.points.get(key, "level") < curLevel) {
+                receivedMessage.author.send(`You've leveled up to level **${curLevel}** in __${receivedMessage.guild.name}__! Ain't that dandy?`)
+                bot.points.set(key, curLevel, "level")
+            }
+        }
 
         const prefixes = commandsJSON.prefixes
         const commands = commandsJSON.commands
@@ -523,13 +589,19 @@ bot.on("message", function(receivedMessage) {
                         case "list":
                             listSongs(receivedMessage)
                             break
+                        case "rank":
+                            rank(receivedMessage, true)
+                            break
+                        case "top":
+                            rank(receivedMessage)
+                            break
                         case "test": // Used for testing purposes.
                             // miecatt
                             if (receivedMessage.author.id === "276586260326383617") {
                                 //bot.emit("error", "hey")
                                 //console.log(receivedMessage.author)
 
-                                receivedMessage.guild
+                                /*receivedMessage.guild
                                     .createRole({
                                         name: "Crustifer",
                                         color: 1752220,
@@ -537,7 +609,10 @@ bot.on("message", function(receivedMessage) {
                                     })
                                     .then(role => bot.emit("test", { role: role, msg: receivedMessage }))
                                     .catch(console.error)
-                                //console.log(receivedMessage.guild.roles)
+                                bot.users.array().forEach(user => {
+                                    console.log(user.username + ": " + user.id)
+                                })*/
+                                console.log(bot.points)
                             }
                             break
                         // Just add any case commands if you want to...

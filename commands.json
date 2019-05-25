@@ -99,6 +99,16 @@
             "args": 0
         },
         {
+            "name": "Rank",
+            "help": "Shows your current ranking on the server.",
+            "args": 0
+        },
+        {
+            "name": "Top",
+            "help": "Shows the current top 5 ranking users on the server.",
+            "args": 0
+        },
+        {
             "name": "Test",
             "help": "A function used for testing purposes",
             "args": 0
