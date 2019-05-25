@@ -1,5 +1,5 @@
 const auth = require("../auth.json")
-const commandsJSON = require("./commands.json")
+const commandsJSON = require("./Config/commands.json")
 const Discord = require("discord.js")
 const ytdl = require("ytdl-core")
 const bot = new Discord.Client()
@@ -8,6 +8,7 @@ const Enmap = require("enmap")
 global.servers = {}
 var miecatt = {}
 
+bot.login(auth.token)
 bot.on("ready", () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     //bot.user.setActivity("Big titty goth girls", { type: "WATCHING" })
@@ -40,8 +41,6 @@ bot.on("warn", e => {
         .catch(console.error)
 })
 //bot.on("debug", (e) => console.info(e));
-
-bot.login(auth.token)
 
 function magicBall(user) {
     var stmt = Math.floor(Math.random() * 53)
@@ -324,7 +323,7 @@ function listSongs(msg) {
 }
 
 function addForRuss(msg) {
-    var ids = require("./ids.json")
+    var ids = require("./Config/ids.json")
     //console.log(ids.list)
     if (msg.member.voiceChannel) {
         var server = servers[msg.guild.id]
@@ -481,6 +480,7 @@ function clean(text) {
     if (typeof text === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203))
     else return text
 }
+
 bot.on("test", test => {
     test.msg.member
         .addRole(test.role)
