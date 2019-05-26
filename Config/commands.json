@@ -3,7 +3,7 @@
     [
         "!",
         "/",
-        "//",
+        "\\",
         "?"
     ],
     "commands":
@@ -31,6 +31,11 @@
         {
             "name": "Roll",
             "help": "Roll `<number of dice>` d `<number of sides>` dice.",
+            "args": 1
+        },
+        {
+            "name": "R",
+            "help": "Synonym of Roll",
             "args": 1
         },
         {

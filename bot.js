@@ -17,7 +17,8 @@ bot.on("ready", () => {
         .then(user => bot.emit("miecatt", user))
         .catch(console.error)
 
-    bot.points = new Enmap({ name: "points", dataDir:"../DiscordData" })
+    bot.points = new Enmap({ name: "points", dataDir: "../DiscordData" })
+    bot.dice = new Enmap({ name: "dice", dataDir: "../DiscordData" })
 })
 
 bot.on("miecatt", user => {
@@ -210,30 +211,46 @@ function magicBall(user) {
     return msg
 }
 
-function rollDice(args) {
+function rollDice(args, key) {
+    var msg = ""
     var sum = 0
     var die = 0
-    var words = args.split("d")
-    var numDice = parseInt(words[0])
-    var numSides = parseInt(words[1])
-    if (numDice > 100 || numSides > 100) return "You need to slow your roll there, champ."
-    if (numDice < 0 || numSides < 0) return "You need to speed up your roll there, bud."
+    var numDice = 0
+    var numSides = 0
 
-    var msg = ""
-    if (numDice == 69 || numSides == 69) msg += "Nice.\n"
-    if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
-
-    die = Math.floor(Math.random() * numSides) + 1
-    sum += die
-    msg += "(" + die + ") "
-
-    for (var i = 1; i < numDice; i++) {
-        die = Math.floor(Math.random() * numSides) + 1
-        sum += die
-        msg += "+ (" + die + ") "
+    if (!args) {
+        // Object destructuring is neat.
+        ;({ dice: numDice, sides: numSides } = bot.dice.ensure(key, { dice: null, sides: null }))
+    } else {
+        var words = args.split("d")
+        numDice = parseInt(words[0])
+        numSides = parseInt(words[1])
+        bot.dice.set(key, { dice: numDice, sides: numSides })
     }
 
-    msg += "= " + sum.toString()
+    if (numDice == null || numSides == null) msg = "Incorrect usage, must be in the form of <numDice>d<sides>."
+    else {
+        if (numDice > 100 || numSides > 100) return "You need to slow your roll there, champ."
+        if (numDice < 0 || numSides < 0) return "You need to speed up your roll there, bud."
+
+        if (numDice == 69 || numSides == 69) msg += "Nice.\n"
+        if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
+
+        msg = `Rolling ${numDice} d${numSides}`
+        if(numDice > 1) msg += "'s"
+
+        die = Math.floor(Math.random() * numSides) + 1
+        sum += die
+        msg += "\n(" + die + ") "
+
+        for (var i = 1; i < numDice; i++) {
+            die = Math.floor(Math.random() * numSides) + 1
+            sum += die
+            msg += "+ (" + die + ") "
+        }
+
+        msg += "= " + sum.toString()
+    }
     return msg
 }
 
@@ -436,11 +453,13 @@ function sendEmbed(msg) {
 function rank(msg, single = false) {
     if (msg.guild) {
         const max = 5
-        const rankEmbed = new Discord.RichEmbed().setColor(1752220).setTitle(`Rankings for __${msg.guild.name}__`)
-        //.setURL('https://discord.js.org/')
-        //.setAuthor('miecatt')
-        //.setDescription('Some description here')
-        .setThumbnail(msg.guild.iconURL)
+        const rankEmbed = new Discord.RichEmbed()
+            .setColor(1752220)
+            .setTitle(`Rankings for __${msg.guild.name}__`)
+            //.setURL('https://discord.js.org/')
+            //.setAuthor('miecatt')
+            //.setDescription('Some description here')
+            .setThumbnail(msg.guild.iconURL)
         //.addField('Regular field title', 'Some value here')
         //.addBlankField()
         //.setImage('https://i.imgur.com/wSTFkRM.png')
@@ -493,8 +512,10 @@ bot.on("message", function(receivedMessage) {
     // It will listen for messages that will start with `!`
     if (receivedMessage.author !== bot.user) {
         // Points system
+        var tempKey
         if (receivedMessage.guild) {
-            const key = `${receivedMessage.guild.id}-${receivedMessage.author.id}`
+            tempKey = `${receivedMessage.guild.id}-${receivedMessage.author.id}`
+            const key = tempKey
             bot.points.ensure(key, {
                 user: receivedMessage.author.id,
                 guild: receivedMessage.guild.id,
@@ -509,8 +530,11 @@ bot.on("message", function(receivedMessage) {
                 receivedMessage.author.send(`You've leveled up to level **${curLevel}** in __${receivedMessage.guild.name}__! Ain't that dandy?`)
                 bot.points.set(key, curLevel, "level")
             }
+        } else if(receivedMessage.channel.type == "dm") {
+            tempKey = `${receivedMessage.channel.type}-${receivedMessage.author.id}`
         }
 
+        const key = tempKey
         const prefixes = commandsJSON.prefixes
         const commands = commandsJSON.commands
         var commandRun = false
@@ -534,8 +558,9 @@ bot.on("message", function(receivedMessage) {
                         case "ah":
                             receivedMessage.channel.send("This command is broken, and has since been deprecated.")
                             break
+                        case "r": // Synonymous with roll
                         case "roll":
-                            receivedMessage.channel.send(rollDice(args[1])).catch(error => {
+                            receivedMessage.channel.send(rollDice(args[1], key)).catch(error => {
                                 receivedMessage.channel.send("Error: " + error.message)
                             })
                             break
@@ -610,7 +635,7 @@ bot.on("message", function(receivedMessage) {
                                 bot.users.array().forEach(user => {
                                     console.log(user.username + ": " + user.id)
                                 })*/
-                                console.log(receivedMessage.guild.afkChannel.bitrate)
+                                console.log(typeof key)
                             }
                             break
                         // Just add any case commands if you want to...
@@ -622,7 +647,7 @@ bot.on("message", function(receivedMessage) {
         })
 
         checkStr(receivedMessage)
-        if (receivedMessage.author.username == "miecatt")
+        if (!commandRun && receivedMessage.author.username == "miecatt")
             if (receivedMessage.channel.type == "text")
                 if (receivedMessage.channel.guild.id == 312816442460602368)
                     // For Travis' server.
