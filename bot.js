@@ -19,6 +19,7 @@ bot.on("ready", () => {
 
     bot.points = new Enmap({ name: "points", dataDir: "../DiscordData" })
     bot.dice = new Enmap({ name: "dice", dataDir: "../DiscordData" })
+    bot.compile = require("./Tools/Compiler/compiler.js").compile
 })
 
 bot.on("miecatt", user => {
@@ -237,7 +238,7 @@ function rollDice(args, key) {
         if (numDice == 420 || numSides == 420) msg += "Blaze it.\n"
 
         msg = `Rolling ${numDice} d${numSides}`
-        if(numDice > 1) msg += "'s"
+        if (numDice > 1) msg += "'s"
 
         die = Math.floor(Math.random() * numSides) + 1
         sum += die
@@ -530,7 +531,7 @@ bot.on("message", function(receivedMessage) {
                 receivedMessage.author.send(`You've leveled up to level **${curLevel}** in __${receivedMessage.guild.name}__! Ain't that dandy?`)
                 bot.points.set(key, curLevel, "level")
             }
-        } else if(receivedMessage.channel.type == "dm") {
+        } else if (receivedMessage.channel.type == "dm") {
             tempKey = `${receivedMessage.channel.type}-${receivedMessage.author.id}`
         }
 
@@ -622,20 +623,8 @@ bot.on("message", function(receivedMessage) {
                             // miecatt
                             if (receivedMessage.author.id === "276586260326383617") {
                                 //bot.emit("error", "hey")
-                                //console.log(receivedMessage.author)
-
-                                /*receivedMessage.guild
-                                    .createRole({
-                                        name: "Crustifer",
-                                        color: 1752220,
-                                        hoist: true
-                                    })
-                                    .then(role => bot.emit("test", { role: role, msg: receivedMessage }))
-                                    .catch(console.error)
-                                bot.users.array().forEach(user => {
-                                    console.log(user.username + ": " + user.id)
-                                })*/
-                                console.log(typeof key)
+                                
+                                console.log(bot.compile("12+34"))
                             }
                             break
                         // Just add any case commands if you want to...
