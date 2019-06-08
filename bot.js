@@ -29,8 +29,14 @@ bot.on("miecatt", user => {
 
 bot.on("error", e => {
     console.error(e)
+
+    if (e.code == "ETIMEDOUT")
+        bot.login(auth.token)
+            .then(console.log("Successfully re-logged in."))
+            .catch(console.error)
+
     miecatt
-        .send(e)
+        .send(e.toString())
         .then(message => console.log(`Sent message: ${message.content}`))
         .catch(console.error)
 })
@@ -622,9 +628,9 @@ bot.on("message", function(receivedMessage) {
                         case "test": // Used for testing purposes.
                             // miecatt
                             if (receivedMessage.author.id === "276586260326383617") {
-                                //bot.emit("error", "hey")
-                                
-                                console.log(bot.compile("12+34"))
+                                bot.emit("error", 'ETIMEDOUT')
+
+                                //console.log(bot.compile("12+34"))
                             }
                             break
                         // Just add any case commands if you want to...
